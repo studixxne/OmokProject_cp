@@ -9,9 +9,13 @@ class Game
 private:
     Board* boardGame;
     State playerTurn = BLACK_STONE;
+    Player* blackPlayer;
+    Player* whitePlayer;
 
 public:
-    Game() { this->boardGame = new Board; } ;
+    Game();
+    Board* getBoard() { return boardGame; }
+    Player* getTurnPlayer();
 
 };
 

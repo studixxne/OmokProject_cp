@@ -99,7 +99,72 @@ void SDL_Engine::handleEvent(SDL_Event* e)
     {
         if (e->button.button == SDL_BUTTON_LEFT)
         {
-            
+            // Get mouse Position
+            int x, y;
+            SDL_GetMouseState(&x, &y);
+            int crrntX = this->getLowerBound_ord_x(x);
+            int crrntY = this->getLowerBound_ord_y(y);
+            std::cout << crrntX << ' ' << crrntY << '\n';
+
+            if (crrntX != -1 && crrntY != -1)
+            {
+                int row = locationToRow(crrntY);
+                int col = locationToCol(crrntX);
+                std::cout << row << ' ' << col << '\n';
+
+                /*
+                if (this->GAMEobj->getBoard()->CheckSet(row, col))
+                {
+                    // 바둑알 놓기
+                    this->GAMEobj->getTurnPlayer()->SetPiece(row, col, this->GAMEobj->getBoard());
+                    
+                    // 게임 오버
+                    if (this->GAMEobj->getBoard()->CheckGameOver()) { this->close(); }
+
+                    else { return; }                 
+                }
+                */
+
+            }
+            else { return; }
         }
     }
+}
+
+// 마우스 지점 확정
+int SDL_Engine::getLowerBound_ord_x(int t)
+{
+    for (int i = 0; i < 15; i++)
+    {
+        if (t <= 60 * i + 120 + 10 && t >= 60 * i + 120 - 10)
+        {
+            return 120 + 60 * i;
+        }
+    }
+
+    return -1;
+}
+
+// 마우스 지점 확정
+int SDL_Engine::getLowerBound_ord_y(int t)
+{
+    for (int i = 0; i < 15; i++)
+    {
+        if (t <= 60 * i + 130 + 10 && t >= 60 * i + 130 - 10)
+        {
+            return 130 + 60 * i;
+        }
+    }
+
+    return -1;
+}
+
+int SDL_Engine::locationToCol(int x)
+{
+    return (x - 120) / 60;
+}
+
+int SDL_Engine::locationToRow(int y)
+{
+    return (y - 130) / 60;
 }

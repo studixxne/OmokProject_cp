@@ -26,6 +26,10 @@ public:
     void close();
     void turnText(State turn);
     void handleEvent(SDL_Event* e);
+    int getLowerBound_ord_x(int t);
+    int getLowerBound_ord_y(int t);
+    int locationToCol(int mouse_x);
+    int locationToRow(int mouse_y);
 
 };
 
