@@ -14,6 +14,15 @@ bool SDL_Engine::init()
     {
         // Text 초기화
         TTF_Init();
+        this->gameFont = TTF_OpenFont("Font.ttf", 18);
+
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+		{
+			std::cout << "사운드 초기화 실패";
+			success = false;
+		}
+
+        this->setSound = Mix_LoadWAV("Sound.wav");
 
         // PNG 초기화
 		int imgFlags = IMG_INIT_PNG;
@@ -84,7 +93,6 @@ bool SDL_Engine::initPictures()
 
 bool SDL_Engine::initBoard()
 {
-    turnText(WHITE_STONE);
     SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 0);
     
     // 세로 줄 그리기
@@ -106,9 +114,6 @@ bool SDL_Engine::initBoard()
 
 void SDL_Engine::close()
 {
-    std::cout << "게임 종료\n";
-    
-    SDL_Delay(5000);
     SDL_DestroyTexture(this->gameTexture[0]);
     SDL_DestroyTexture(this->gameTexture[1]);
     this->gameTexture[0] = NULL;
@@ -122,9 +127,11 @@ void SDL_Engine::close()
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
+
+    exit(0);
 }
 
-void SDL_Engine::turnText(State turn)
+void SDL_Engine::gameOverText(State turn)
 {
     TTF_Font* font = TTF_OpenFont("Font.ttf", 18);
     SDL_Color black = {0, 0, 0};
@@ -132,24 +139,25 @@ void SDL_Engine::turnText(State turn)
 
     if (turn == BLACK_STONE)
     {
-        surfaceMessage = TTF_RenderText_Solid(font, "*  Black Player Turn  *", black);
+        surfaceMessage = TTF_RenderText_Solid(font, "*  Black Player Win!  *", black);
     }
 
     else if (turn == WHITE_STONE)
     {
-        surfaceMessage = TTF_RenderText_Solid(font, "*  White Player Turn  *", black);
+        surfaceMessage = TTF_RenderText_Solid(font, "*  White Player Win!  *", black);
     }
 
-    SDL_Texture* message = SDL_CreateTextureFromSurface(this->renderer, surfaceMessage);
+    this->gameTexture[2] = SDL_CreateTextureFromSurface(this->renderer, surfaceMessage);
     SDL_Rect message_rect;
-    message_rect.x = 440;
+    message_rect.x = 450;
     message_rect.y = 60;
     message_rect.w = surfaceMessage->w;
     message_rect.h = surfaceMessage->h;
 
-    SDL_RenderCopy(this->renderer, message, NULL, &message_rect);
+    SDL_RenderCopy(this->renderer, this->gameTexture[2], NULL, &message_rect);
     SDL_FreeSurface(surfaceMessage);
-    SDL_DestroyTexture(message);
+    SDL_DestroyTexture(this->gameTexture[2]);
+    SDL_RenderPresent(this->renderer);
 }
 
 void SDL_Engine::handleEvent(SDL_Event* e)
@@ -163,25 +171,29 @@ void SDL_Engine::handleEvent(SDL_Event* e)
             SDL_GetMouseState(&x, &y);
             int crrntX = this->getLowerBound_ord_x(x);
             int crrntY = this->getLowerBound_ord_y(y);
-            std::cout << crrntX << ' ' << crrntY << '\n';
 
             if (crrntX != -1 && crrntY != -1)
             {
                 int row = locationToRow(crrntY);
                 int col = locationToCol(crrntX);
-                std::cout << row << ' ' << col << '\n';
 
                 if (this->GAMEobj->getBoard()->CheckSet(row, col))
                 {
                     // 바둑알 놓기
+                    Mix_PlayChannel(-1, this->setSound, 0);
                     this->GAMEobj->getTurnPlayer()->SetPiece(row, col, this->GAMEobj->getBoard());
                     this->drawOmokPng(crrntX, crrntY, this->GAMEobj->getTurn());
                     SDL_RenderPresent(this->renderer);
-                    std::cout << "착수 완료\n";
-                    
-                    // 게임 오버
-                    if (this->GAMEobj->getBoard()->CheckGameOver()) { this->close(); }
 
+                    // 게임 오버
+                    if (this->GAMEobj->getBoard()->CheckGameOver()) 
+                    {
+                        this->gameOverText(this->GAMEobj->getTurn());
+                        SDL_Delay(7000);
+                        this->close(); 
+                    }
+
+                    // 턴 변경
                     else
                     {
                         this->GAMEobj->ChangeTurn();
@@ -194,6 +206,7 @@ void SDL_Engine::handleEvent(SDL_Event* e)
         }
     }
 }
+
 
 // 마우스 지점 인식
 int SDL_Engine::getLowerBound_ord_x(int t)

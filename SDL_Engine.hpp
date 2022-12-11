@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "Game.hpp"
 
 
@@ -14,8 +15,9 @@ private:
     const int HEIGHT = 1020;
     SDL_Window* gameWindow = NULL;
     SDL_Renderer* renderer = NULL;
-    SDL_Texture* gameTexture[2];
-
+    SDL_Texture* gameTexture[3];
+    Mix_Chunk* setSound = NULL;
+    TTF_Font* gameFont = NULL;
     Game* GAMEobj = new Game();
     bool gameOver = false;
 
@@ -24,7 +26,7 @@ public:
     bool initBoard();
     bool initPictures();
     void close();
-    void turnText(State turn);
+    void gameOverText(State turn);
     void handleEvent(SDL_Event* e);
     int getLowerBound_ord_x(int t);
     int getLowerBound_ord_y(int t);
