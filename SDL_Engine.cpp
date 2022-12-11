@@ -189,7 +189,7 @@ void SDL_Engine::handleEvent(SDL_Event* e)
                     if (this->GAMEobj->getBoard()->CheckGameOver()) 
                     {
                         this->gameOverText(this->GAMEobj->getTurn());
-                        SDL_Delay(7000);
+                        SDL_Delay(10000);
                         this->close(); 
                     }
 
