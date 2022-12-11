@@ -23,6 +23,13 @@ int main()
                 return 1;
             }
 
+            if (!omok.initPictures())
+            {
+                std::cout << "이미지 초기화에 실패하였습니다/\n";
+                omok.close();
+                return 1;
+            }
+
             SDL_Event e;
 
             while (!quit)
@@ -30,14 +37,11 @@ int main()
                 while (SDL_PollEvent(&e) != 0)
                 {
                     if (e.type == SDL_QUIT) { quit = true; }
-
                     omok.handleEvent(&e);
                 }
             }
         }
     }
-
-    omok.close();
 
     return 0;
 }

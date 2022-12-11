@@ -116,13 +116,13 @@ bool Board::CheckGameOver()
     {
         for (int j = 0; j + i < 15; j++)
         {
-            if (this->map[14 - (j + i)][14 - j] == BLACK_STONE)
+            if (this->map[j][14 - (i + j)] == BLACK_STONE)
             {
                 black_win++;
                 white_win = 0;
             }
 
-            else if (this->map[14 - (j + i)][14 - j] == WHITE_STONE)
+            else if (this->map[j][14 - (i + j)] == WHITE_STONE)
             {
                 white_win++;
                 black_win = 0;
@@ -138,13 +138,13 @@ bool Board::CheckGameOver()
     {
         for (int j = 0; j + i < 15; j++)
         {
-            if (this->map[14 - j][14 - (j + i)] == BLACK_STONE)
+            if (this->map[j + i][14 - j] == BLACK_STONE)
             {
                 black_win++;
                 white_win = 0;
             }
 
-            else if (this->map[14 - j][14 - (j + i)] == WHITE_STONE)
+            else if (this->map[j + i][14 - j] == WHITE_STONE)
             {
                 white_win++;
                 black_win = 0;
@@ -165,6 +165,3 @@ void Board::SetMap(int x, int y, State player_color)
 
     else { this->map[x][y] = BLACK_STONE; } 
 }
-
-
-

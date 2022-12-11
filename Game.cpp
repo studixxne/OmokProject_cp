@@ -13,3 +13,13 @@ Player* Game::getTurnPlayer()
 
     else { return whitePlayer; }
 }
+
+void Game::ChangeTurn()
+{
+    if ( this->getTurn() == BLACK_STONE )
+    {
+        this->playerTurn = WHITE_STONE;
+    }
+
+    else { this->playerTurn = BLACK_STONE; }    
+}

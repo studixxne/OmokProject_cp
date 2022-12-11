@@ -16,6 +16,8 @@ public:
     Game();
     Board* getBoard() { return boardGame; }
     Player* getTurnPlayer();
+    State getTurn() { return playerTurn; }
+    void ChangeTurn();
 
 };
 
